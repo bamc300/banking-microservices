@@ -76,8 +76,7 @@ public class CuentaIntegrationTest {
     @Test
     void validarInactivacion_DeberiaRetornarTodasLasCuentasConSaldo() throws Exception {
         mockMvc.perform(get("/cuentas/validacion-inactivacion/" + clienteId)
-                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-                // El caso de uso devuelve TODAS las cuentas con su saldo, no filtra por saldo > 0
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())                
                 .andExpect(jsonPath("$.length()").value(2));
     }
 
@@ -85,14 +84,6 @@ public class CuentaIntegrationTest {
     void inactivarCuentasPorCliente_DeberiaInactivarTodas() throws Exception {
         mockMvc.perform(patch("/cuentas/cliente/" + clienteId + "/inactivar")
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
-
-        // Verificar que las cuentas estan inactivas (aunque en la realidad si tienen saldo no se
-        // podrian inactivar
-        // pero el servicio de cuentas 'inactivarCuentasPorCliente' del controlador parece que solo
-        // llama al usecase
-        // Vamos a verificar el comportamiento actual).
-        // Revisando InactivarCuentasPorClienteUseCaseImpl.java seria bueno, pero asumimos que las
-        // inactiva.
 
         Cuenta c1 = cuentaRepositoryPort.buscarPorId(cuentaConSaldo.getCuentaId()).orElseThrow();
         Cuenta c2 = cuentaRepositoryPort.buscarPorId(cuentaSinSaldo.getCuentaId()).orElseThrow();

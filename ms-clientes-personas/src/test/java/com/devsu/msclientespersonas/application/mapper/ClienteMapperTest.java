@@ -37,8 +37,8 @@ class ClienteMapperTest {
         assertNotNull(cliente);
         assertNotNull(cliente.getClienteId());
         assertTrue(cliente.isEstado());
-        assertNotNull(cliente.getContrasena()); // Encoded password
-        assertNotEquals("password", cliente.getContrasena()); // Should be encoded
+        assertNotNull(cliente.getContrasena()); 
+        assertNotEquals("password", cliente.getContrasena());
 
         assertEquals("Test Name", cliente.getPersona().getNombre());
         assertEquals("M", cliente.getPersona().getGenero());

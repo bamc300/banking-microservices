@@ -15,8 +15,6 @@ public class ClienteEventConsumerUseCaseImpl implements ClienteEventConsumerPort
                 clienteInfo.getClienteId(), clienteInfo.getNombre(),
                 clienteInfo.getIdentificacion());
 
-        
-
         log.info("Cliente {} procesado exitosamente", clienteInfo.getClienteId());
     }
 }

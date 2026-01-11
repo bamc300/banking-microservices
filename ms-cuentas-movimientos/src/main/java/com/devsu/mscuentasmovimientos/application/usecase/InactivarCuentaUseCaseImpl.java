@@ -27,16 +27,13 @@ public class InactivarCuentaUseCaseImpl implements InactivarCuentaUseCase {
         Cuenta cuenta = cuentaRepositoryPort.buscarPorId(cuentaId)
                 .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada con ID: " + cuentaId));
 
-        if (!cuenta.isEstado()) {
-            // Ya está inactiva, pero validamos si tiene saldo por si acaso (aunque debería ser 0)
-            // Para este requerimiento, asumimos que si ya está inactiva, simplemente retornamos la cuenta
+        if (!cuenta.isEstado()) {           
             return cuenta;
         }
 
         BigDecimal saldoActual = calcularSaldoActual(cuenta);
 
         if (saldoActual.compareTo(BigDecimal.ZERO) > 0) {
-            // Crear movimiento de retiro por el saldo total
             Movimiento retiro = Movimiento.builder()
                     .movimientoId(UUID.randomUUID())
                     .fecha(LocalDateTime.now())

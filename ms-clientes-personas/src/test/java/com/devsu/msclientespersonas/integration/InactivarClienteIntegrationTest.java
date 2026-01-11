@@ -66,8 +66,7 @@ public class InactivarClienteIntegrationTest {
                                 .identificacion("1122334455").direccion("Direccion Test")
                                 .telefono("0999999999").genero("Masculino").edad(30).build();
 
-                Cliente cliente = Cliente.builder().clienteId(clienteId) // Esto podría ser ignorado
-                                                                         // si la entidad genera ID
+                Cliente cliente = Cliente.builder().clienteId(clienteId) 
                                 .contrasena("1234").estado(true).persona(persona).build();
 
                 Cliente clienteGuardado = clienteRepositoryPort.guardar(cliente);
@@ -77,44 +76,40 @@ public class InactivarClienteIntegrationTest {
         @Test
         void inactivarCliente_DeberiaInactivarCliente_CuandoNoTieneSaldoPendiente()
                         throws Exception {
-                // Mock respuesta del servicio externo (ms-cuentas-movimientos)
+                
                 when(cuentaExternalServicePort.obtenerCuentasConSaldo(clienteId))
                                 .thenReturn(List.of());
 
-                // Ejecutar la petición HTTP al controlador
+                
                 mockMvc.perform(patch("/clientes/" + clienteId + "/inactivar")
                                 .contentType(MediaType.APPLICATION_JSON))
                                 .andExpect(status().isOk());
 
-                // Verificar el estado en la base de datos
+                
                 Cliente clienteActualizado =
                                 clienteRepositoryPort.buscarPorId(clienteId).orElseThrow();
                 assertFalse(clienteActualizado.isEstado(), "El cliente debería estar inactivo");
 
-                // Verificar que se llamó al servicio externo para inactivar cuentas
+                
                 verify(cuentaExternalServicePort).inactivarCuentas(clienteId);
         }
 
         @Test
         void inactivarCliente_DeberiaFallar_CuandoTieneSaldoPendiente() throws Exception {
-                // Mock respuesta del servicio externo indicando saldo pendiente
+                
                 CuentaSaldoDto cuentaConSaldo = CuentaSaldoDto.builder().numeroCuenta("123456")
                                 .saldoActual(new BigDecimal("100.00")).build();
 
                 when(cuentaExternalServicePort.obtenerCuentasConSaldo(clienteId))
                                 .thenReturn(List.of(cuentaConSaldo));
 
-                // Ejecutar la petición HTTP
+                
                 mockMvc.perform(patch("/clientes/" + clienteId + "/inactivar")
                                 .contentType(MediaType.APPLICATION_JSON))
-                                .andExpect(status().isOk()); // El manejador de excepciones retorna
-                                                             // 200 OK con detalles
-                                                             // GlobalExceptionHandler para
-                                                             // CuentasConSaldoException
+                                .andExpect(status().isOk()); 
 
-                // Verificar que el cliente sigue activo
+                
                 Cliente cliente = clienteRepositoryPort.buscarPorId(clienteId).orElseThrow();
-                // Nota: Dependiendo de la transacción, podría seguir activo.
-                // En este caso esperamos que la transacción falle o no se guarde el cambio.
+                
         }
 }

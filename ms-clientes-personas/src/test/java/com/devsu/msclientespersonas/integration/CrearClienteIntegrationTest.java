@@ -63,24 +63,21 @@ public class CrearClienteIntegrationTest {
                 .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.clienteId").exists());
 
-        // Verificar base de datos
+        
         boolean existe = clienteRepositoryPort.existePorIdentificacion("9988776655");
         assertThat(existe).isTrue();
 
-        // Verificar evento RabbitMQ
-        // Esperamos un poco para asegurarnos de que el mensaje llegue a la cola
+ 
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             Object message = rabbitTemplate.receiveAndConvert("clientes.queue");
             assertThat(message).isNotNull();
 
-            // Si el convertidor funciona correctamente, deberíamos obtener un objeto o un mapa
-            // Dependiendo de la configuración del MessageConverter
+
             if (message instanceof ClienteCreadoEvent) {
                 ClienteCreadoEvent event = (ClienteCreadoEvent) message;
                 assertThat(event.getIdentificacion()).isEqualTo("9988776655");
             } else {
-                // Si llega como LinkedHashMap (Jackson default)
-                // O verificar simplemente que no es nulo si el tipo es complejo
+
                 assertThat(message.toString()).contains("9988776655");
             }
         });

@@ -29,8 +29,6 @@ public class ValidarInactivacionClienteUseCaseImpl implements ValidarInactivacio
 
         for (Cuenta cuenta : cuentas) {
             BigDecimal saldoActual = calcularSaldoActual(cuenta);
-            // Devolvemos todas las cuentas con su saldo actual, independientemente de si es 0 o
-            // mayor
             cuentasConSaldo.add(CuentaSaldoDto.builder().numeroCuenta(cuenta.getNumeroCuenta())
                     .saldoActual(saldoActual).build());
         }

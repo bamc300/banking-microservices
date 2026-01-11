@@ -68,7 +68,7 @@ class MovimientoUseCaseTest {
     @Test
     void registrarMovimiento_DeberiaLanzarExcepcion_CuandoSaldoInsuficiente() {
         movimiento.setTipoMovimiento(Movimiento.TipoMovimiento.RETIRO);
-        movimiento.setValor(BigDecimal.valueOf(2000)); // Retiro mayor a saldo (1000)
+        movimiento.setValor(BigDecimal.valueOf(2000));
 
         when(cuentaRepositoryPort.buscarPorId(cuentaId)).thenReturn(Optional.of(cuenta));
         when(movimientoRepositoryPort.obtenerUltimoMovimientoPorCuentaId(cuentaId)).thenReturn(null);

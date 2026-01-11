@@ -68,14 +68,14 @@ class CuentaUseCaseTest {
         Cuenta resultado = inactivarCuentaUseCase.inactivarCuenta(cuentaId);
 
         assertFalse(resultado.isEstado());
-        verify(movimientoRepositoryPort).guardar(any(Movimiento.class)); // Se debe crear retiro
+        verify(movimientoRepositoryPort).guardar(any(Movimiento.class));
         verify(cuentaRepositoryPort).guardar(cuenta);
     }
 
     @Test
     void inactivarCuenta_NoDeberiaCrearMovimiento_CuandoSaldoEsCero() {
         cuenta.setSaldoInicial(BigDecimal.ZERO);
-        // cuenta.setSaldoActual(BigDecimal.ZERO); // No existe
+        // cuenta.setSaldoActual(BigDecimal.ZERO); 
 
         when(cuentaRepositoryPort.buscarPorId(cuentaId)).thenReturn(Optional.of(cuenta));
         when(movimientoRepositoryPort.obtenerUltimoMovimientoPorCuentaId(cuentaId))

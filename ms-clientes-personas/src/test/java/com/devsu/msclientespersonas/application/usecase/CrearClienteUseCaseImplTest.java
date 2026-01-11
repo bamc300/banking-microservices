@@ -47,14 +47,14 @@ class CrearClienteUseCaseImplTest {
 
   @Test
   void crearCliente_DebeCrearClienteYPublicarEvento() {
-    // Given
+    
     when(clienteRepositoryPort.existePorIdentificacion(anyString())).thenReturn(false);
     when(clienteRepositoryPort.guardar(any(Cliente.class))).thenReturn(cliente);
 
-    // When
+    
     Cliente resultado = crearClienteUseCase.crearCliente(cliente);
 
-    // Then
+    
     assertNotNull(resultado);
     assertEquals(cliente.getClienteId(), resultado.getClienteId());
     assertEquals(cliente.getPersona().getNombre(), resultado.getPersona().getNombre());
@@ -66,10 +66,10 @@ class CrearClienteUseCaseImplTest {
 
   @Test
   void crearCliente_ConIdentificacionExistente_DebeLanzarExcepcion() {
-    // Given
+    
     when(clienteRepositoryPort.existePorIdentificacion(anyString())).thenReturn(true);
 
-    // When & Then
+    
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
         () -> crearClienteUseCase.crearCliente(cliente));
 
