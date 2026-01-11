@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-banking
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: clientes_db,cuentas_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - banking-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-banking
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - banking-network
+
+  ms-clientes-personas:
+    build:
+      context: ./ms-clientes-personas
+      dockerfile: Dockerfile
+    container_name: ms-clientes-personas
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/clientes_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - banking-network
+
+  ms-cuentas-movimientos:
+    build:
+      context: ./ms-cuentas-movimientos
+      dockerfile: Dockerfile
+    container_name: ms-cuentas-movimientos
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cuentas_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - banking-network
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+
+networks:
+  banking-network:
+    driver: bridge
