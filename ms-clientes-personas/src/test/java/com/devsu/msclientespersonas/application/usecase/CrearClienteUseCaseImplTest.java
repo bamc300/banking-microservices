@@ -73,7 +73,7 @@ class CrearClienteUseCaseImplTest {
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
         () -> crearClienteUseCase.crearCliente(cliente));
 
-    assertEquals("Ya existe un cliente con esa identificación", exception.getMessage());
+    assertEquals("Ya existe un cliente con esa identificación: 1234567890", exception.getMessage());
     verify(clienteRepositoryPort).existePorIdentificacion("1234567890");
     verify(clienteRepositoryPort, never()).guardar(any(Cliente.class));
     verify(clienteEventPublisherPort, never()).publicarClienteCreado(any(Cliente.class));
