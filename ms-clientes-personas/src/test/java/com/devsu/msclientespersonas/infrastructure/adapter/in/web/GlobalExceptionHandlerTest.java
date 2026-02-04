@@ -1,8 +1,8 @@
 package com.devsu.msclientespersonas.infrastructure.adapter.in.web;
 
-import com.devsu.msclientespersonas.application.dto.CuentaSaldoDto;
-import com.devsu.msclientespersonas.domain.exception.ClienteNoEncontradoException;
-import com.devsu.msclientespersonas.domain.exception.CuentasConSaldoException;
+import com.devsu.msclientespersonas.application.dto.AccountBalanceDto;
+import com.devsu.msclientespersonas.domain.exception.ClientNotFoundException;
+import com.devsu.msclientespersonas.domain.exception.AccountsWithBalanceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -30,47 +30,47 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleClienteNoEncontrado_DeberiaRetornarNotFound() {
-        ClienteNoEncontradoException ex = new ClienteNoEncontradoException("Cliente no encontrado");
+    void handleClientNotFound_ShouldReturnNotFound() {
+        ClientNotFoundException ex = new ClientNotFoundException("Client not found");
 
-        ResponseEntity<Map<String, Object>> response = exceptionHandler.handleClienteNoEncontrado(ex);
+        ResponseEntity<Map<String, Object>> response = exceptionHandler.handleClientNotFound(ex);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Not Found", response.getBody().get("error"));
-        assertEquals("Cliente no encontrado", response.getBody().get("message"));
+        assertEquals("Client not found", response.getBody().get("message"));
     }
 
     @Test
-    void handleCuentasConSaldo_DeberiaRetornarOk() {
-        List<CuentaSaldoDto> cuentas = List.of(new CuentaSaldoDto("123", BigDecimal.TEN));
-        CuentasConSaldoException ex = new CuentasConSaldoException(cuentas);
+    void handleAccountsWithBalance_ShouldReturnOk() {
+        List<AccountBalanceDto> accounts = List.of(new AccountBalanceDto("123", BigDecimal.TEN));
+        AccountsWithBalanceException ex = new AccountsWithBalanceException(accounts);
 
-        ResponseEntity<Map<String, Object>> response = exceptionHandler.handleCuentasConSaldo(ex);
+        ResponseEntity<Map<String, Object>> response = exceptionHandler.handleAccountsWithBalance(ex);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("No se puede inactivar el cliente porque cuenta con saldo.", response.getBody().get("error"));
-        assertEquals(cuentas, response.getBody().get("cuentasPendientes"));
+        assertEquals("Cannot inactivate client because they have accounts with balance.", response.getBody().get("error"));
+        assertEquals(accounts, response.getBody().get("pendingAccounts"));
     }
 
     @Test
-    void handleIllegalArgument_DeberiaRetornarBadRequest() {
-        IllegalArgumentException ex = new IllegalArgumentException("Argumento inválido");
+    void handleIllegalArgument_ShouldReturnBadRequest() {
+        IllegalArgumentException ex = new IllegalArgumentException("Invalid argument");
 
         ResponseEntity<Map<String, Object>> response = exceptionHandler.handleIllegalArgument(ex);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Bad Request", response.getBody().get("error"));
-        assertEquals("Argumento inválido", response.getBody().get("message"));
+        assertEquals("Invalid argument", response.getBody().get("message"));
     }
 
     @Test
-    void handleGlobalException_DeberiaRetornarInternalServerError() {
-        Exception ex = new Exception("Error interno");
+    void handleGlobalException_ShouldReturnInternalServerError() {
+        Exception ex = new Exception("Internal error");
 
         ResponseEntity<Map<String, Object>> response = exceptionHandler.handleGlobalException(ex, webRequest);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Error interno del servidor", response.getBody().get("error"));
+        assertEquals("Internal server error", response.getBody().get("error"));
         assertEquals("/test", response.getBody().get("path"));
     }
 }

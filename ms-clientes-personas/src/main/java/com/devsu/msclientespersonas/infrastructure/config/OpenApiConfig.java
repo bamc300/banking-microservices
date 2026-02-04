@@ -10,8 +10,7 @@ public class OpenApiConfig {
 
   @Bean
   public OpenAPI customOpenAPI() {
-    return new OpenAPI().info(new Info().title("MS Clientes Personas API").version("1.0")
-        .description("API de gestión de clientes y personas"));
+    return new OpenAPI().info(new Info().title("MS Clients Persons API").version("1.0")
+        .description("Clients and Persons Management API"));
   }
 }
-

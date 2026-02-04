@@ -9,12 +9,12 @@ import org.springframework.web.client.RestClient;
 public class RestClientConfig {
 
     @Value("${app.external.cuentas-service.url:http://ms-cuentas-movimientos:8082}")
-    private String cuentasServiceUrl;
+    private String accountsServiceUrl;
 
     @Bean
-    public RestClient cuentasRestClient() {
+    public RestClient accountsRestClient() {
         return RestClient.builder()
-                .baseUrl(cuentasServiceUrl)
+                .baseUrl(accountsServiceUrl)
                 .build();
     }
 }

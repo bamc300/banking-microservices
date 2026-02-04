@@ -1,6 +1,6 @@
 package com.devsu.mscuentasmovimientos.infrastructure.adapter.in.web;
 
-import com.devsu.mscuentasmovimientos.domain.exception.SaldoNoDisponibleException;
+import com.devsu.mscuentasmovimientos.domain.exception.BalanceNotAvailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,9 +14,9 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(SaldoNoDisponibleException.class)
-    public ResponseEntity<Map<String, Object>> handleSaldoNoDisponibleException(
-            SaldoNoDisponibleException ex, WebRequest request) {
+    @ExceptionHandler(BalanceNotAvailableException.class)
+    public ResponseEntity<Map<String, Object>> handleBalanceNotAvailableException(
+            BalanceNotAvailableException ex, WebRequest request) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("timestamp", LocalDateTime.now());
         errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("timestamp", LocalDateTime.now());
         errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-        errorResponse.put("error", "Error en el formato de la solicitud. Verifique los tipos de datos.");
+        errorResponse.put("error", "Request format error. Check data types.");
         errorResponse.put("path", request.getDescription(false).replace("uri=", ""));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("timestamp", LocalDateTime.now());
         errorResponse.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        errorResponse.put("error", "Error interno del servidor");
+        errorResponse.put("error", "Internal server error");
         errorResponse.put("path", request.getDescription(false).replace("uri=", ""));
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);

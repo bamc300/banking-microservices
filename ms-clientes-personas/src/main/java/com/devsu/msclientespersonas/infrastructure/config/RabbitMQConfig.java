@@ -8,28 +8,27 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-  @Value("${rabbitmq.exchange.clientes:clientes.exchange}")
+  @Value("${rabbitmq.exchange.clients:clients.exchange}")
   private String exchange;
 
-  @Value("${rabbitmq.queue.clientes:clientes.queue}")
+  @Value("${rabbitmq.queue.clients:clients.queue}")
   private String queue;
 
-  @Value("${rabbitmq.routing.clientes.creado:clientes.creado}")
+  @Value("${rabbitmq.routing.clients.created:clients.created}")
   private String routingKey;
 
   @Bean
-  public TopicExchange clientesExchange() {
+  public TopicExchange clientsExchange() {
     return ExchangeBuilder.topicExchange(exchange).durable(true).build();
   }
 
   @Bean
-  public Queue clientesQueue() {
+  public Queue clientsQueue() {
     return QueueBuilder.durable(queue).build();
   }
 
   @Bean
-  public Binding clientesBinding() {
-    return BindingBuilder.bind(clientesQueue()).to(clientesExchange()).with(routingKey);
+  public Binding clientsBinding() {
+    return BindingBuilder.bind(clientsQueue()).to(clientsExchange()).with(routingKey);
   }
 }
-
